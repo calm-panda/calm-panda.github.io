@@ -1,0 +1,130 @@
+---
+import type { Project } from '../lib/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const href = project.demoUrl || project.githubUrl;
+const linkLabel = project.demoUrl ? 'live demo' : 'GitHub';
+---
+
+<li class="hover-row project">
+  <div class="hover-row__bg" aria-hidden="true"></div>
+  <div class="project__body">
+    <h3 class="project__title">
+      {
+        href ? (
+          <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} (${linkLabel}, opens in a new tab)`}>
+            <span class="project__hit" aria-hidden="true" />
+            <span>
+              {project.title}
+              {project.internal && <span class="project__flag">Internal</span>}
+              <svg class="arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path
+                  fill-rule="evenodd"
+                  d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+          </a>
+        ) : (
+          <span>
+            {project.title}
+            {project.internal && <span class="project__flag">Internal</span>}
+          </span>
+        )
+      }
+    </h3>
+    <p class="project__description">{project.description}</p>
+    {
+      project.githubUrl && project.demoUrl && (
+        <p class="project__secondary">
+          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+        </p>
+      )
+    }
+    {
+      project.technologies.length > 0 && (
+        <ul class="tag-list" aria-label={`Technologies for ${project.title}`}>
+          {project.technologies.map((tech) => (
+            <li class="tag">{tech}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</li>
+
+<style>
+  .project {
+    margin-bottom: 3rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .project__body {
+    position: relative;
+    z-index: 1;
+  }
+
+  .project__title {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--color-text);
+  }
+
+  .project__title a {
+    color: inherit;
+    position: static;
+  }
+
+  .project__title span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .project__flag {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 0.05rem 0.45rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    line-height: 1.4;
+  }
+
+  .project__hit {
+    position: absolute;
+    inset: -1rem -1.5rem;
+    z-index: 1;
+    border-radius: 0.375rem;
+  }
+
+  .project__description,
+  .project__secondary {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .project__secondary a {
+    position: relative;
+    z-index: 2;
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  .project__secondary a:hover {
+    color: var(--color-accent);
+  }
+</style>

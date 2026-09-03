@@ -1,0 +1,70 @@
+---
+interface Post {
+  id: string;
+  data: {
+    title: string;
+    description: string;
+    pubDate: Date;
+  };
+}
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+if (posts.length === 0) return;
+---
+
+<section id="writing" class="section" aria-label="Writing">
+  <h2 class="visually-hidden">Writing</h2>
+  <ul class="writing-list">
+    {
+      posts.map((post) => (
+        <li>
+          <a href={`/writing/${post.id}/`}>
+            <span class="writing-list__date mono">
+              {post.data.pubDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              })}
+            </span>
+            <span class="writing-list__title">{post.data.title}</span>
+            <span class="writing-list__desc">{post.data.description}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .writing-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .writing-list a {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: border-color var(--transition);
+  }
+
+  .writing-list a:hover {
+    border-color: rgba(100, 255, 218, 0.45);
+  }
+
+  .writing-list__date {
+    color: var(--color-muted);
+  }
+
+  .writing-list__title {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+</style>

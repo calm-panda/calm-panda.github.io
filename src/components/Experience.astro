@@ -1,0 +1,116 @@
+---
+import { experience } from '../data/experience';
+
+interface Props {
+  hasResume: boolean;
+  resumeHref: string;
+}
+
+const { hasResume, resumeHref } = Astro.props;
+---
+
+<section id="experience" class="section" aria-label="Work experience">
+  <h2 class="visually-hidden">Experience</h2>
+
+  <ol class="hover-list">
+    {
+      experience.map((job) => (
+        <li class="hover-row job">
+          <div class="hover-row__bg" aria-hidden="true" />
+          <header class="job__date">
+            {job.start} — {job.end}
+          </header>
+          <div class="job__body">
+            <h3 class="job__title">
+              {job.role} · {job.company}
+            </h3>
+            <ul class="job__points">
+              {job.bullets.map((bullet) => (
+                <li>{bullet}</li>
+              ))}
+            </ul>
+            <ul class="tag-list" aria-label={`Technologies used at ${job.company}`}>
+              {job.technologies.map((tech) => (
+                <li class="tag">{tech}</li>
+              ))}
+            </ul>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  {
+    hasResume && (
+      <a class="text-link" href={resumeHref} download>
+        <span>
+          View Full Résumé
+          <svg class="arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </span>
+      </a>
+    )
+  }
+</section>
+
+<style>
+  .job {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 1.5rem;
+    margin-bottom: 3rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .job__date,
+  .job__body {
+    position: relative;
+    z-index: 1;
+  }
+
+  .job__date {
+    margin-top: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+
+  .job__title {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--color-text);
+  }
+
+  .job__points {
+    margin-top: 0.5rem;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .job__points li {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .text-link {
+    display: inline-flex;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .text-link span {
+    display: inline-flex;
+    align-items: center;
+  }
+</style>

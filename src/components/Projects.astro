@@ -1,0 +1,75 @@
+---
+import type { Project } from '../lib/projects';
+import ProjectCard from './ProjectCard.astro';
+
+interface Props {
+  featured: Project[];
+  remaining: Project[];
+}
+
+const { featured, remaining } = Astro.props;
+---
+
+<section id="projects" class="section" aria-label="Selected projects">
+  <h2 class="visually-hidden">Projects</h2>
+
+  <ol class="hover-list">
+    {featured.map((project) => <ProjectCard project={project} />)}
+  </ol>
+
+  {
+    remaining.length > 0 && (
+      <div class="projects__more">
+        <button
+          type="button"
+          class="archive-link"
+          data-projects-toggle
+          aria-expanded="false"
+          aria-controls="all-projects"
+        >
+          <span>
+            View Full Project Archive
+            <svg class="arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path
+                fill-rule="evenodd"
+                d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </span>
+        </button>
+        <ol id="all-projects" class="hover-list projects__remaining" hidden data-projects-panel>
+          {remaining.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </ol>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .projects__more {
+    margin-top: 1.5rem;
+  }
+
+  .archive-link {
+    display: inline-flex;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .archive-link span {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .projects__remaining {
+    margin-top: 2.5rem;
+  }
+
+  .projects__remaining[hidden] {
+    display: none;
+  }
+</style>

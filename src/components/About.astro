@@ -1,0 +1,22 @@
+---
+import { site } from '../data/site';
+---
+
+<section id="about" class="section" aria-label="About me">
+  <h2 class="visually-hidden">About</h2>
+  <div class="about">
+    {site.about.map((paragraph) => <p>{paragraph}</p>)}
+    <p>{site.education}</p>
+  </div>
+</section>
+
+<style>
+  .about {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .about p {
+    margin-bottom: 0;
+  }
+</style>

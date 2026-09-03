@@ -1,0 +1,76 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('writing', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={`${post.data.title} — ${site.name}`} description={post.data.description}>
+  <main class="writing-page layout">
+    <p class="mono">
+      <a href="/#writing">← Writing</a>
+    </p>
+    <article>
+      <header>
+        <p class="mono writing-page__date">
+          {
+            post.data.pubDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })
+          }
+        </p>
+        <h1>{post.data.title}</h1>
+        <p class="writing-page__desc">{post.data.description}</p>
+      </header>
+      <div class="writing-page__content">
+        <Content />
+      </div>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  .writing-page {
+    max-width: 42rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .writing-page a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .writing-page header {
+    margin: 1.5rem 0 2rem;
+  }
+
+  .writing-page h1 {
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .writing-page__desc {
+    color: var(--color-muted);
+  }
+
+  .writing-page__content :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .writing-page__content :global(a) {
+    color: var(--color-accent);
+  }
+</style>

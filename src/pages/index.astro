@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import { access } from 'node:fs/promises';
+import { join } from 'node:path';
+import About from '../components/About.astro';
+import Experience from '../components/Experience.astro';
+import Projects from '../components/Projects.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Writing from '../components/Writing.astro';
+import { manualProjects } from '../data/manual-projects';
+import { repositoryConfig } from '../data/repository-config';
+import { baseNav, site } from '../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { mergeProjects, splitFeatured, type GithubRepoSnapshot } from '../lib/projects';
+import snapshot from '../data/github-repos.json';
+
+let writingPosts: Awaited<ReturnType<typeof getCollection<'writing'>>> = [];
+try {
+  writingPosts = (await getCollection('writing'))
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+} catch {
+  writingPosts = [];
+}
+
+const nav = [
+  ...baseNav.filter((item) => item.id !== 'contact'),
+  ...(writingPosts.length > 0 ? [{ id: 'writing', label: 'Writing' }] : []),
+];
+
+const repos = (snapshot.repos ?? []) as GithubRepoSnapshot[];
+const projects = mergeProjects(repos, manualProjects, repositoryConfig);
+const { featured, remaining } = splitFeatured(projects);
+
+let hasResume = false;
+try {
+  await access(join(process.cwd(), 'public', 'resume.pdf'));
+  hasResume = true;
+} catch {
+  hasResume = false;
+}
+
+const resumeHref = `${import.meta.env.BASE_URL}resume.pdf`.replace(/\/{2,}/g, '/');
+const year = new Date().getFullYear();
+---
+
+<BaseLayout>
+  <div class="layout" id="top">
+    <Sidebar nav={nav} />
+    <main class="main">
+      <About />
+      <Experience hasResume={hasResume} resumeHref={resumeHref} />
+      <Projects featured={featured} remaining={remaining} />
+      <Writing posts={writingPosts} />
+      <footer class="site-footer">
+        <p>
+          {site.contactInvite}
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </p>
+        <p>
+          © {year} {site.name}. Built with Astro and set in Inter.
+        </p>
+      </footer>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .site-footer {
+    max-width: 28rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  .site-footer p + p {
+    margin-top: 0.75rem;
+  }
+
+  .site-footer a {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  .site-footer a:hover {
+    color: var(--color-accent);
+  }
+</style>
