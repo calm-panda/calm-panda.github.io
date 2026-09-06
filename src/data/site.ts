@@ -10,7 +10,7 @@ export const site = {
   title: 'Ankit Chaurasia — Software Engineer',
   description:
     'Software engineer building reliable products across backend systems, data, infrastructure, and the features people use.',
-  headline: 'I build software from product features to the systems underneath.',
+  headline: 'I build services, data, and the infrastructure products run on.',
   intro:
     'Software engineer in India. I work across backend services, data layers, and the infrastructure that keeps products reliable.',
   about: [
